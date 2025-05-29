@@ -27,10 +27,10 @@ iniciaAlocador:
 	
 	movq $12, %rax			
 	movq $0, %rdi			
-	syscall					# rax <- brk atual
+	syscall						# rax <- brk atual
 
-	movq %rax, [topoHeap]	# topoHeap <- endereço atual de brk
-	movq %rax, [baseHeap]	# baseHeap <- endereço atual de brk
+	movq %rax, topoHeap(%rip)	# topoHeap <- endereço de brk
+	movq %rax, baseHeap(%rip)	# baseHeap <- endereço de brk
 
 	popq %rbp
 	ret
@@ -42,9 +42,9 @@ finalizaAlocador:
 	movq %rsp, %rbp
 	
 	movq $12, %rax			
-	movq [baseHeap], %rdi
-	movq %rdi, [topoHeap]	# topoHeap <- baseHeap
-	syscall					# brk <- baseHeap
+	movq baseHeap(%rip), %rdi
+	movq %rdi, topoHeap(%rip)	# topoHeap <- baseHeap
+	syscall						# brk <- baseHeap
 	
 	popq %rbp
 	ret
@@ -64,23 +64,25 @@ alocaMem:
 	pushq %rbp
 	movq %rsp, %rbp
 	
-	movq -16(%rbp), %r8		# r8 <- tamanho
+	movq %rdi, %r8				# r8 <- tamanho
 	
-	movq [topoHeap], %r9	# r9 <- antigoTopoHeap
-	movq %r9, %r10			# r10 <- antigoTopoHeap
-	addq $24, %r10			# r10 <- r10 + 24
-	addq %r8, %r10			# r10 <- r10 + tamanho (novoTopoHeap)
+aumentaHeap:
+	movq topoHeap(%rip), %r9	# r9 <- antigoTopoHeap
+	movq %r9, %r10				# r10 <- antigoTopoHeap
+	addq $24, %r10				# r10 <- r10 + 24
+	addq %r8, %r10				# r10 <- r10 + tamanho (novoTopoHeap)
 	
 	movq $12, %rax			
-	movq %r10, %rdi			# rdi <- novoTopoHeap
-	syscall					# brk <- novoTopoHeap
+	movq %r10, %rdi				# rdi <- novoTopoHeap
+	syscall						# brk <- novoTopoHeap
 	
-	movq %rax, [topoHeap]	# topoHeap <- novoTopoHeap
+	movq %rdi, topoHeap(%rip)	# topoHeap <- novoTopoHeap
 	
-	movq $1, (%r9)
-	movq %r8, 8(%r9)
-	movq $0, 16(%r9)
-	
+	movq $1, (%r9)				# campo 1 = ocupado
+	movq %r8, 8(%r9)			# campo 2 = tamanho
+	movq $0, 16(%r9)			# campo 3 = ponteiro (0)
+
+fimAlocaMem:
 	popq %rbp
 	ret
 
@@ -90,16 +92,16 @@ imprimeMapa:
 	pushq %rbp
 	movq %rsp, %rbp
 	
-	movq [baseHeap], %r8		# r8 <- baseHeap
-	movq [topoHeap], %r9		# r9 <- topoHeap
+	movq baseHeap(%rip), %r8	# r8 <- baseHeap
+	movq topoHeap(%rip), %r9	# r9 <- topoHeap
 	
-	cmpq %r9, %r8			# se baseHeap == topoHeap, a heap está vazia
+	cmpq %r9, %r8			# se baseHeap == topoHeap, heap vazia
 	jne loopImpressão		# impressão da heap
 
 imprimeVazio:
 	lea vazio(%rip), %rsi	# rip <- endereço de vazio
     movq $8, %rdx			# rdx <- tamanho da string               
-    movq $1, %rax			# rax <- syscall: write                           
+    movq $1, %rax			# rax <- syscall: write
     movq $1, %rdi			# rdi <- stdout
     syscall   
 	
@@ -107,7 +109,7 @@ imprimeVazio:
 	
 loopImpressão:
 	cmpq %r9, %r8			# verifica se r8 >= topoHeap
-	jge fimImprimeMapa		# se for finaliza; cc segue no loop de impressão  
+	jge fimImprimeMapa		# true = finaliza, false = loop
 	
 	call funcGerencial		# imprimir 24 hashtags
 	
@@ -158,8 +160,8 @@ loopGerencial:
 	jge fimFuncGerencial	# enquanto r12 for menor que 24 continua
 	
 	lea charGerencial(%rip), %rsi	# rip <- endereço de vazio
-    movq $1, %rdx					# rdx <- tamanho da string               
-    movq $1, %rax					# rax <- syscall: write                           
+    movq $1, %rdx					# rdx <- tamanho da string
+    movq $1, %rax					# rax <- syscall: write
     movq $1, %rdi					# rdi <- stdout
     syscall
     
@@ -177,15 +179,15 @@ funcLivre:
 	movq %rsp, %rbp
 	
 	movq $0, %r12			# r12 <- iterador
-	movq -16(%rbp), %r13	# r13 <- condição de parada
+	movq 16(%rbp), %r13	# r13 <- condição de parada
 	
 loopLivre:
 	cmpq %r13, %r12
 	jge fimFuncLivre		# enquanto r12 for menor que num_bytes
 	
 	lea charLivre(%rip), %rsi	# rip <- endereço de vazio
-    movq $1, %rdx				# rdx <- tamanho da string               
-    movq $1, %rax				# rax <- syscall: write                           
+    movq $1, %rdx				# rdx <- tamanho da string
+    movq $1, %rax				# rax <- syscall: write
     movq $1, %rdi				# rdi <- stdout
     syscall
     
@@ -203,20 +205,20 @@ funcOcupado:
 	movq %rsp, %rbp
 	
 	movq $0, %r12			# r12 <- iterador
-	movq -16(%rbp), %r13	# r13 <- condição de parada
+	movq 16(%rbp), %r13	# r13 <- condição de parada
 	
 loopOcupado:
 	cmpq %r13, %r12
 	jge fimFuncOcupado		# enquanto r12 for menor que num_bytes
 	
 	lea charOcupado(%rip), %rsi	# rip <- endereço de vazio
-    movq $1, %rdx				# rdx <- tamanho da string               
-    movq $1, %rax				# rax <- syscall: write                           
+    movq $1, %rdx				# rdx <- tamanho da string
+    movq $1, %rax				# rax <- syscall: write
     movq $1, %rdi				# rdi <- stdout
     syscall
     
     addq $1, %r12				# r12++
-    jmp loopLivre
+    jmp loopOcupado
     
 fimFuncOcupado:
 	popq %rbp

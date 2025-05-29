@@ -8,9 +8,9 @@ int main (long int argc, char** argv) {
   imprimeMapa();                  // <vazio>
 
   a = (void *) alocaMem(10);
- /* imprimeMapa();                  // ################**********
+  imprimeMapa();                  // ################**********
   b = (void *) alocaMem(4);
-  imprimeMapa();                  // ################**********##############****
+  imprimeMapa();   /*               // ################**********##############****
   liberaMem(a);
   imprimeMapa();                  // ################----------##############****
   liberaMem(b);                   // ################----------------------------

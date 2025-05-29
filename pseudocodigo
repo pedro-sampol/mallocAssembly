@@ -16,23 +16,26 @@ TAD
 ALOCAÇÃO
 ------------------------------
 alocaMem (num_bytes) {
-	procura um bloco livre com tamanho maior ou igual a num_bytes
-		percorre a lista dos vazios até encontrar ponteiro = 0
-		se tamanho >= numbytes
+	// procura um bloco livre com tamanho maior ou igual a num_bytes
+	r8 = num_bytes
+	r9 = ponteiroAnterior (listaVazia)
+	r10 = ponteiroAtual
+	
+	while (ponteiro != 0) {
+		r10 = tamanho
+		if (r10 >= r8) {
 			verificação = 1
-			aux = ponteiro anterior
+			r12 = ponteiro anterior
 			ponteiro anterior = ponteiro
+		} else {
+			ponteiro = proximoPonteiro
+		}
+	}
 			
-				
-	se não existir aloca novo espaço aumentando brk
-		percorre a lista dos ocupados até encontrar ponteiro = 0
-			ponteiro = topoHeap
+	if (ponteiro == 0) {
 		
-		novoTopo = topoHeap + num_bytes
-		brk = novoTopo
-		verificação = 1
-		tamanho = num_bytes
-		ponteiro = 0
+	}	
+
 }
 
 IMPRESSÃO
