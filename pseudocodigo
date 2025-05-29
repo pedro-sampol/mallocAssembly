@@ -1,0 +1,76 @@
+TAD
+------------------------------
+8 bytes: verificação
+8 bytes: tamanho
+8 bytes: ponteiro
+	- se o ponteiro = 0, fim da lista
+
+ALOCAÇÃO
+------------------------------
+alocaMem (num_bytes) {
+	procura um bloco livre com tamanho maior ou igual a num_bytes
+		percorre a lista dos vazios até encontrar ponteiro = 0
+		se tamanho >= numbytes
+			verificação = 1
+			aux = ponteiro anterior
+			ponteiro anterior = ponteiro
+			
+				
+	se não existir aloca novo espaço aumentando brk
+		percorre a lista dos ocupados até encontrar ponteiro = 0
+			ponteiro = topoHeap
+		
+		novoTopo = topoHeap + num_bytes
+		brk = novoTopo
+		verificação = 1
+		tamanho = num_bytes
+		ponteiro = 0
+}
+
+IMPRESSÃO
+------------------------------
+imprimeMapa(){
+	base
+	topo
+
+	if (base == topo) {
+		print (vazio)
+		return
+	}
+
+	while (base < topo) {
+		loopGerencial()
+		r10 = r8				// livre ou ocupado
+		r11 = r8 + 8			// tam
+		if (r10 == 0) {
+			loopLivre(%r11)
+		}
+		else {
+			loopOcupado(%r11)
+		}
+	}
+}
+
+loopGerencial (){
+	r12 = 0
+	r13 = 16
+	while (r12 < r13) {
+		print (#)
+	}
+}
+
+loopLivre (tam) {
+	r12 = 0
+	r13 = tam
+	while (r12 <= r13) {
+		print (-)
+	}
+}
+
+loopOcupado (tam) {
+	r12 = 0
+	r13 = tam
+	while (r12 <= r13) {
+		print (+)
+	}
+}
