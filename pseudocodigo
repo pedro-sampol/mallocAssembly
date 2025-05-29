@@ -1,3 +1,11 @@
+comandos gdb
+lay next <enter>
+break <parada>
+run
+next ou nexti
+step para entrar em funções
+ref depois de um print
+
 TAD
 ------------------------------
 8 bytes: verificação

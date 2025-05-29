@@ -75,7 +75,7 @@ alocaMem:
 	movq %r10, %rdi			# rdi <- novoTopoHeap
 	syscall					# brk <- novoTopoHeap
 	
-	movq %r10, [topoHeap]	# topoHeap <- novoTopoHeap
+	movq %rax, [topoHeap]	# topoHeap <- novoTopoHeap
 	
 	movq $1, (%r9)
 	movq %r8, 8(%r9)
