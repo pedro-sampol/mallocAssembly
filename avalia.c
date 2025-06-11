@@ -8,32 +8,31 @@ int main (long int argc, char** argv) {
   imprimeMapa();
   // 0) estado inicial
 
-  a=(void *) alocaMem(2);
+  a=(void *) alocaMem(6);
   imprimeMapa();
-  b=(void *) alocaMem(4);
+  b=(void *) alocaMem(9);
   imprimeMapa();
-  c=(void *) alocaMem(6);
+  c=(void *) alocaMem(8);
   imprimeMapa();
-  d=(void *) alocaMem(8);
+  d=(void *) alocaMem(7);
   imprimeMapa();
   // 1) Espero ver quatro segmentos ocupados
 
-  liberaMem(a);
-  imprimeMapa(); 
-  liberaMem(c);
-  imprimeMapa(); 
   liberaMem(b);
-  imprimeMapa();
+  imprimeMapa(); 
+  liberaMem(d);
+  imprimeMapa(); 
   // 2) Espero ver quatro segmentos alternando
   //    ocupados e livres
-
-  b=(void *) alocaMem(5);
+ 
+  b=(void *) alocaMem(2);
   imprimeMapa();
- /* d=(void *) alocaMem(2);
+  d=(void *) alocaMem(5);
   imprimeMapa();
-  e=(void *) alocaMem(9);
+  e=(void *) alocaMem(1);
   imprimeMapa();
   // 3) Deduzam
+  
 	
   liberaMem(c);
   imprimeMapa(); 
@@ -46,6 +45,6 @@ int main (long int argc, char** argv) {
   liberaMem(e);
   imprimeMapa();
    // 4) volta ao estado inicial
-*/
+
   finalizaAlocador();
 }

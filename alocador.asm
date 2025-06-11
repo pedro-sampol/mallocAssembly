@@ -115,6 +115,7 @@ fimLiberaMem:
 alocaMem:
 	pushq %rbp
 	movq %rsp, %rbp
+	subq $8, %rsp
 	
 	movq %rdi, %r8				# r8 <- num_bytes
 	movq listaVazia(%rip), %r9	# r9 <- endereço do nodo atual (listaVazia)
@@ -124,7 +125,7 @@ alocaMem:
 loopPercorreVazia:
 	cmpq $0, %r9				# se endereço do nodo atual == 0
 	je aumentaHeap				# topoHeap aumenta
-	
+teste:
 	movq %r9, %r11
 	addq $8, %r11				# r11 <- endereço do tamanho
 	
@@ -152,6 +153,7 @@ elseNodoListaVazia:
 fimNodoListaVazia:	
 	movq %r9, %rax					# rax <- endereço do nodo atual
 	addq $24, %rax					# rax <- valor de retorno
+	movq %rax, -8(%rbp)				# salva rax na variavel antes da função
 	
 	pushq %r9						# empilha nodo atual
 	lea listaOcupada(%rip), %rbx
@@ -160,6 +162,7 @@ fimNodoListaVazia:
 	call insereLista				# chama função de inserção
 	addq $24, %rsp					
 	
+	movq -8(%rbp), %rax				# rax <- retorno
 	jmp fimAlocaMem				
 	
 elseNodoVazioEncontrado:	
@@ -213,6 +216,7 @@ fimListaOcupadaVazia:
 	addq $24, %rax				# rax <- valor de retorno
 	
 fimAlocaMem:
+	addq $8, %rsp
 	popq %rbp
 	ret
 
@@ -245,7 +249,7 @@ insereLista:
 
 listaDiferenteZero:
 	cmpq %r11, %r9				# se nodo atual > nodo inserido
-	jle fimPrimeiroNodo			# insere na primeira posição
+	jle loopPrimeiroNodo		# insere na primeira posição
 	
 	movq %r9, (%r12)			# ponteiro inserido <- primeiro nodo
 	movq %r11, (%r8)			# lista <- endereço do nodo inserido
@@ -258,10 +262,10 @@ loopPrimeiroNodo:
 	
 	movq %r9, %r13				# r13 <- endereço do nodo atual
 	movq %r13, %r14				
-	addq 16, %r14				# r14 <- endereço do ponteiro atual	
+	addq $16, %r14				# r14 <- endereço do ponteiro atual	
 	movq (%r10), %r9			# r9 <- endereço do proximo nodo
 	movq %r9, %r10
-	addq 16, %r10				# r10 <- endereço do proximo ponteiro
+	addq $16, %r10				# r10 <- endereço do proximo ponteiro
 	
 	cmpq $0, (%r14)				# se ponteiro anterior == 0
 	je fimLoopPrimeiroNodo		# r13 é o ultimo nodo							 
