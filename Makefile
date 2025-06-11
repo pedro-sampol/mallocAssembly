@@ -2,7 +2,7 @@
 EXECUTAVEL = trabalho
 
 # Arquivos
-C_SOURCE = exemplo.c
+C_SOURCE = avalia.c
 ASM_SOURCE = alocador.asm
 ASM_OBJECT = alocador.o
 

@@ -16,27 +16,160 @@ TAD
 ALOCAÇÃO
 ------------------------------
 alocaMem (num_bytes) {
-	// procura um bloco livre com tamanho maior ou igual a num_bytes
-	r8 = num_bytes
-	r9 = ponteiroAnterior (listaVazia)
-	r10 = ponteiroAtual
+	r8 = num_bytes;
+	r9 = endereço do nodo atual
+	r10 = endereço do antigo nodo
+	rcx = endereço da listaVazia
+			
+	while (r9 != 0) {
+		r11 = tamanho atual;
+		r12 = ponteiro atual;	
+			
+		if (r8 <= (r11)) {			// se num_bytes <= tamanho
+			(r9) = 1;
+			
+			if ((rcx) == r9) {		// se listaVazia == nodo atual
+				listaVazia = r12;
+			} else {
+				r10 = r10 + 16;
+				(r10) = (r12)
+			}
+				
+			insereLista (1, r9);
+			return r9;
+		}
+		r10 = r9;
+		r9 = (r12);
+	}
 	
-	while (ponteiro != 0) {
-		r10 = tamanho
-		if (r10 >= r8) {
-			verificação = 1
-			r12 = ponteiro anterior
-			ponteiro anterior = ponteiro
-		} else {
-			ponteiro = proximoPonteiro
+	r9 = topoHeap;
+	r10 = topoHeap + 24 + r8;
+	topoHeap = aumentaHeap (r10);
+	(r9) = 1;
+	(r9 + 8) = num_bytes;
+	(r9 + 16) = 0;
+	
+	r11 = endereço da listaOcupada
+	r12 = endereço do nodo atual
+	r13 = endereço do ponteiro atual
+	
+	if (listaOcupada == 0) {
+		listaOcupada = r9
+	} else {
+		while (0 != r13) {
+			r12 = (r13);
+			r13 = r12 + 16;
+		}
+		r13 = r9;
+	}
+	
+	return r9;
+}	
+
+DESALOCAÇÃO
+------------------------------
+liberaMem () {
+	r8 = nodo removido
+	r9 = endereço da listaOcupada
+	r10 = nodo atual (listaOcupada)
+	r11 = ponteiro atual
+	r12 = ponteiro do nodo removido (r8 + 16)
+	
+	if (r10 == 0) {				// se listaOcupada esta vazia
+		return 0;
+	}
+
+	(r8) = 0					// arruma verificação
+	
+	if ((r9) == r8) {			// se listaOcupada == nodo removido
+		(r9) = (r12);
+	} else {
+		while (r8 != (r11)) {	// se nodo removido != ponteiro atual
+
+			r10 = (r11);
+			r11 = r10 + 16;
+		}
+		(r11) = (r12);
+	}
+	
+	insereLista (0, r8);
+	
+	return 1;
+}
+
+INSERÇÃO
+------------------------------
+insereLista (int i, lista, nodo) {
+	rdx = i
+	r8 = endereço da lista 
+	
+	r9 = endereco do nodo atual (r8)
+	r10 = endereço do ponteiro atual
+	
+	r11 = endereço do nodo inserido
+	r12 = endereço do ponteiro inserido
+	
+	r13 = nodo passado
+	
+	if (r9 == 0) {
+		(r8) = r11;
+		(r12) = 0;
+		return;
+	}
+	
+	if (r9 > r11) {						// id da lista > id do inserido
+		(r12) = r9;						// id da lista  = id do inserido
+		(r8) = r11;
+	} else {
+		while (r9 < r11) {				// enquanto id atual < id inserido
+			r13 = r9;
+			r14 = r10
+			r9 = (r10);
+			r10 = r9 + 16;
+			if ((r14) == 0) break;
+		}
+		(r12) = (r14)
+		(r14) = r11
+	}
+	
+	if (rdx == 0) {
+		if (r9 == 0) jmp endereçosDiferentes;
+		
+		rax = r9 + 8;				// tamanho
+		rbx = r9 + 24;
+		rcx = rbx + (rax);
+		rdx = (r10)					// proximo nodo
+		if (rcx == rdx) {
+			(rax) += 24;
+			rbx = rdx + 8;			// proximo tamanho
+			rcx = (rbx);
+			(rax) += rcx;			// corrigiu o campo tamanho
+			
+			rax += 8;				// ponteiro atual
+			rbx += 8;				// proximo ponteiro
+			rcx = (rbx);
+			(rax) = rcx;			// corrigiu o campo ponteiro
+		}
+		
+		rax = r13 + 8;				// tamanho
+		rbx = r13 + 24;
+		rcx = rbx + (rax);
+		if (rcx == r9) {
+			(rax) += 24;
+			rbx = r9 + 8;
+			rcx = (rbx);
+			(rax) += rcx;			// corrigiu o campo tamanho
+			
+			rax += 8;
+			rbx += 8;
+			rcx = (rbx);
+			(rax) = rcx;			// corrigiu o campo ponteiro
 		}
 	}
-			
-	if (ponteiro == 0) {
-		
-	}	
-
+	
+	return;
 }
+
 
 IMPRESSÃO
 ------------------------------
